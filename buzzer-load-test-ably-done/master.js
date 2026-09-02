@@ -51,7 +51,7 @@ async function main() {
                          * Everyone receives exactly the same target timestamp.
                          */
                         // const startAt = Date.now() + 5000;
-                        const startAt = new Date("2026-09-01T17:05:00+05:30").getTime();
+                        const startAt = new Date("2026-09-01T17:10:00+05:30").getTime();
 
                         console.log(
                             `Buzz scheduled at ${new Date(startAt).toLocaleString(
