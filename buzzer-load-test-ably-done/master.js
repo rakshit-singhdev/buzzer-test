@@ -2,7 +2,7 @@ const { Worker } = require("worker_threads");
 const path = require("path");
 const { fetchPlayersByCode } = require("./fetch-players.js");
 
-const joinCode = "JJ2H54";
+const joinCode = "RTWHJP";
 const mongoUri ="mongodb+srv://rohityadavdeligence_db_user:rohit123@cluster0.7ljqk7x.mongodb.net/fmly";
 
 const workers = [];
@@ -51,7 +51,7 @@ async function main() {
                          * Everyone receives exactly the same target timestamp.
                          */
                         // const startAt = Date.now() + 5000;
-                        const startAt = new Date("2026-09-01T17:10:00+05:30").getTime();
+                        const startAt = new Date("2026-09-01T17:12:00+05:30").getTime();
 
                         console.log(
                             `Buzz scheduled at ${new Date(startAt).toLocaleString(
