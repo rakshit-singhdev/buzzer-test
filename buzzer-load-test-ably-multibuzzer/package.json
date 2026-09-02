@@ -1,0 +1,16 @@
+{
+  "name": "buzzer-load-test-ably",
+  "version": "1.0.0",
+  "description": "Ably buzzer load test using worker threads",
+  "main": "master.js",
+  "scripts": {
+    "start": "node master.js"
+  },
+  "dependencies": {
+    "ably": "^2.27.0",
+    "mongodb": "^7.5.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
