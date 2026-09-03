@@ -12,8 +12,9 @@ module.exports = {
     apiBaseUrl: "https://familyfeudbackend.duckdns.org/api",
 
     // Socket.IO server URL.
-    serverUrl: "https://familyfeudbackend.duckdns.org",
+    serverUrl: process.env.SERVER_URL ?? "https://familyfeudbackend.duckdns.org",
 
-    // Ten test players are created on the selected team.
-    playersPerTeam: 10,
+    // Stable identities let a redeployed load test rejoin its existing seats.
+    playerPrefix: process.env.LOAD_TEST_ID ?? "render-load-test",
+    playersPerTeam: Number(process.env.PLAYERS_PER_TEAM ?? 10),
 };

@@ -1,7 +1,7 @@
 const { Worker } = require("worker_threads");
 const path = require("path");
 const { joinPlayersByCode } = require("./fetch-players.js");
-const { joinCode, apiBaseUrl, teamNumber, buzzerAt, playersPerTeam } = require("./config.js");
+const { joinCode, apiBaseUrl, teamNumber, buzzerAt, playersPerTeam, playerPrefix } = require("./config.js");
 
 const workers = [];
 let ready = 0;
@@ -23,7 +23,10 @@ async function main() {
     if (!Number.isFinite(startAt) || startAt <= Date.now()) {
         throw new Error("BUZZ_AT must be a valid future timestamp");
     }
-    const players = await joinPlayersByCode(apiBaseUrl, joinCode, teamNumber, playersPerTeam);
+    if (!Number.isInteger(playersPerTeam) || playersPerTeam < 1) {
+        throw new Error("PLAYERS_PER_TEAM must be a positive integer");
+    }
+    const players = await joinPlayersByCode(apiBaseUrl, joinCode, teamNumber, playersPerTeam, playerPrefix);
 
     console.log(`Starting ${players.length} workers for game "${joinCode}"...\n`);
 

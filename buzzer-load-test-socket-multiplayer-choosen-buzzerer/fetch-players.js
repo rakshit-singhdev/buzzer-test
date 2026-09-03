@@ -57,7 +57,7 @@ async function joinPlayer(apiBaseUrl, joinCode, teamId, name, deviceId) {
  * Returns the flat list of {sessionId, role, teamId, playerId, playerName}
  * entries the load test workers expect.
  */
-async function joinPlayersByCode(apiBaseUrl, joinCode, teamNumber, playersPerTeam) {
+async function joinPlayersByCode(apiBaseUrl, joinCode, teamNumber, playersPerTeam, playerPrefix) {
     const session = await getSessionByCode(apiBaseUrl, joinCode);
     const teams = session.teams ?? [];
 
@@ -65,19 +65,32 @@ async function joinPlayersByCode(apiBaseUrl, joinCode, teamNumber, playersPerTea
         throw new Error(`Team number ${teamNumber} does not exist in game "${joinCode}"`);
     }
 
-    const deviceIp = getLocalDeviceIp();
     const players = [];
 
     const team = teams[teamNumber - 1];
+    const maxPlayers = session.maxPlayersPerTeam ?? session.rule?.maxPlayersPerTeam;
+    const existingLoadTestPlayers = new Set(
+        (team.players ?? [])
+            .map((player) => player.deviceId)
+            .filter((deviceId) => typeof deviceId === "string" && deviceId.startsWith(`${playerPrefix}-`))
+    );
+    if (Number.isFinite(maxPlayers) && team.players.length - existingLoadTestPlayers.size + playersPerTeam > maxPlayers) {
+        throw new Error(
+            `Team "${team.name}" has ${team.players.length}/${maxPlayers} players. ` +
+            `Set PLAYERS_PER_TEAM to an available seat count or remove old players from the lobby.`
+        );
+    }
+
     for (let serialNo = 1; serialNo <= playersPerTeam; serialNo++) {
-        const name = `Device ${deviceIp} ${team.name} Player${serialNo}`;
+        const deviceId = `${playerPrefix}-${joinCode}-team${teamNumber}-player${serialNo}`;
+        const name = `Load test ${team.name} Player${serialNo}`;
 
         const joined = await joinPlayer(
                 apiBaseUrl,
                 joinCode,
                 team._id,
                 name,
-                name
+                deviceId
         );
 
         players.push({
