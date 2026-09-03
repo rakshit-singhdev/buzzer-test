@@ -1,0 +1,16 @@
+{
+  "name": "buzzer-load-test-socket",
+  "version": "1.0.0",
+  "description": "Socket.IO buzzer load test using worker threads",
+  "main": "master.js",
+  "scripts": {
+    "start": "node master.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2",
+    "socket.io-client": "^4.8.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
