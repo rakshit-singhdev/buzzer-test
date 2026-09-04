@@ -48,6 +48,16 @@ socket.on("connect", () => parentPort.postMessage({ type: "ready", playerId, pla
 socket.on("connect_error", (err) => parentPort.postMessage({ type: "error", playerId, playerName, error: err.message }));
 socket.on("disconnect", (reason) => parentPort.postMessage({ type: "disconnected", playerId, playerName, reason, disconnectedAt: Date.now(), disconnectedTime: formatTime(Date.now()) }));
 
+socket.on("ping", (payload) => {
+    socket.emit("pong", {
+        sessionId: payload?.sessionId ?? sessionId,
+        serverSentAt: payload?.serverSentAt ?? null,
+        clientSentAt: performance.now(),
+        playerId,
+        teamId: teamId ?? null,
+    });
+});
+
 socket.on("buzzer_player_set", (payload) => {
     if (String(payload?.teamId) !== String(teamId) || String(payload?.playerId) !== String(playerId)) return;
     assigned = true;
