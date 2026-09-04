@@ -65,8 +65,20 @@ socket.on("buzzer_player_set", (payload) => {
     schedulePress();
 });
 
+function latestRound(rounds) {
+    if (!Array.isArray(rounds) || rounds.length === 0) return null;
+    return rounds.reduce((latest, round) => {
+        if (!latest) return round;
+        return (round?.roundNumber ?? -Infinity) >= (latest?.roundNumber ?? -Infinity) ? round : latest;
+    }, null);
+}
+
 socket.on("buzzer_press", (payload) => {
-    const press = payload?.state?.rounds?.find((round) => round?.buzzer?.pressedBy)?.buzzer?.pressedBy?.find((entry) => String(entry.playerId) === String(playerId));
+    // The server includes `pressedBy` for the round the press just resolved in;
+    // fall back to the highest-roundNumber round in state.rounds, never the first match,
+    // so a stale pressedBy from an earlier round can't be picked up.
+    const pressedBy = payload?.pressedBy ?? latestRound(payload?.state?.rounds)?.buzzer?.pressedBy ?? [];
+    const press = pressedBy.find((entry) => String(entry.playerId) === String(playerId));
     if (!press || persisted) return;
     persisted = true;
     parentPort.postMessage({ type: "persisted", playerId, playerName, storedTime: formatTime(new Date(press.pressedAt).getTime()) });
